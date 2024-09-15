@@ -70,14 +70,23 @@ const ImageCropper = () => {
       ctx.drawImage(croppedImageEl, x, y, size, size);
       ctx.restore();
 
+      function capitalizeWords(str) {
+        if (typeof str !== 'string') {
+          throw new TypeError('Expected a string');
+        }
+        // Trim leading and trailing spaces, split by spaces, filter empty items (extra spaces), and capitalize each word
+        return str.trim().split(/\s+/).map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+      }
+
       // Add the user's name
       if (name) {
+        const capitalized = capitalizeWords(name);
         ctx.font = "bold 28px Arial"; // Font style
         ctx.fillStyle = "#fff"; // Text color
         ctx.textAlign = "left";
         const nameX = 130;
         const nameY = 715;
-        ctx.fillText(name,nameX, nameY, 800); // Position the text
+        ctx.fillText(capitalized,nameX, nameY, 800); // Position the text
       }
 
       // Export combined image
@@ -90,76 +99,85 @@ const ImageCropper = () => {
   };
 
   return (
-    <div className="relative flex w-full justify-center">
-      <div className="flex flex-col w-1/3 mt-10 justify-start items-center">
-        <div
-          className="w-[300px] h-[300px] border border-dashed border-gray-400 overflow-hidden"
-          onClick={ClickImageInput}
-        >
-          <Cropper
-            src={image} // Image to be cropped
-            style={{ height: "100%", width: "100%" }}
-            aspectRatio={1} // Circle crop
-            guides={false}
-            crop={onCrop}
-            ref={cropperRef}
-            viewMode={1}
-            background={false}
-            responsive={true}
-            autoCropArea={1}
-          />
-        </div>
-        <input
-          id="image-input"
-          className="mt-5"
-          type="file"
-          onChange={handleImageChange}
-        />
-        {/* name */}
-        <div className="flex flex-col my-5 items-start">
-          <label htmlFor="name" className="mb-1">
-            Enter Your Name : {"{In English}"}
-          </label>
+    <div className="relative flex flex-col w-full justify-center">
+      <header>
+        <h1 className="w-full text-center mt-5 text-3xl font-bold font-sans max-lg:flex max-lg:flex-col"><span>1631 Gharsabha,</span> <span className=" break-before-left"> 21 September 2024</span></h1>
+      </header>
+      <div className="flex w-full justify-center">
+        <div className="flex flex-col w-1/3 mt-10 justify-start items-center">
+          <div
+            className="w-[300px] h-[300px] border border-dashed border-gray-400 overflow-hidden"
+            onClick={ClickImageInput}
+          >
+            <Cropper
+              src={image} // Image to be cropped
+              style={{ height: "100%", width: "100%" }}
+              aspectRatio={1} // Circle crop
+              guides={false}
+              crop={onCrop}
+              ref={cropperRef}
+              viewMode={1}
+              background={false}
+              responsive={true}
+              autoCropArea={1}
+            />
+          </div>
           <input
-            type="text"
-            name="name"
-            className="w-[300px] p-2 border border-gray-400 rounded-lg"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)} // Handle name input
+            id="image-input"
+            className="mt-5"
+            type="file"
+            onChange={handleImageChange}
           />
+          {/* name */}
+          <div className="flex flex-col my-5 items-start">
+            <label htmlFor="name" className="mb-1">
+              Enter Your Name : {"{In English or Gujarati}"}
+            </label>
+            <input
+              type="text"
+              name="name"
+              className="w-[300px] p-2 border border-gray-400 rounded-lg"
+              placeholder="Name"
+              value={name}
+              maxLength={15}
+              onChange={(e) => setName(e.target.value)} // Handle name input
+            />
+          </div>
+          {/* email */}
+          <button
+            onClick={exportImage}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+          >
+            Save
+          </button>
         </div>
-        {/* email */}
-        <button
-          onClick={exportImage}
-          className="bottom-5 left-5 px-4 py-2 bg-blue-500 text-white rounded-lg"
-        >
-          Save
-        </button>
-      </div>
 
-      <div className="relative mt-10 max-lg:hidden">
-        <img
-          id="background-image"
-          src="/main-sample.jpg"
-          alt="Background"
-          className="w-full h-[500px]"
-        />
-        {croppedImage && (
+        <div className="relative mt-10 max-lg:hidden">
           <img
-            src={croppedImage}
-            alt="Cropped"
-            style={{
-              position: "absolute",
-              top: "295px",
-              left: "181px",
-              width: "100px",
-              height: "100px",
-              borderRadius: "50%",
-            }}
+            id="background-image"
+            src="/main-sample.jpg"
+            alt="Background"
+            className="w-full h-[500px]"
           />
-        )}
+          {croppedImage && (
+            <img
+              src={croppedImage}
+              alt="Cropped"
+              style={{
+                position: "absolute",
+                top: "295px",
+                left: "181px",
+                width: "100px",
+                height: "100px",
+                borderRadius: "50%",
+              }}
+            />
+          )}
+        </div>
       </div>
+      <header>
+        <h1 className="w-full text-center my-7 text-lg font-sans max-lg:text-sm">Created by Akash IIIT SURAT</h1>
+      </header>
     </div>
   );
 };
